@@ -20,10 +20,6 @@ class Windows10UserReg(_Reg):
     def csv_networks_list(self):
         super(Windows10UserReg, self)._csv_networks_list(r'Software\Microsoft\Windows NT\CurrentVersion\NetworkList\Profiles')
 
-    def csv_shell_forders(self):
-        super(Windows10UserReg, self)._csv_shell_forders(
-            r'Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders\')
-
     def json_open_save_mru(self):
         super(Windows10UserReg, self)._json_open_save_mru(
             r"Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32\OpenSaveMRU")
@@ -33,6 +29,3 @@ class Windows10UserReg(_Reg):
 
     def json_networks_list(self):
         super(Windows10UserReg,self)._json_networks_list(r'Software\Microsoft\Windows NT\CurrentVersion\NetworkList\Profiles')
-
-    def json_shell_forders(self):
-        super(Windows10UserReg,self)._json_shell_forders(r'Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders\')
