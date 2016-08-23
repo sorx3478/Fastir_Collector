@@ -965,3 +965,37 @@ class _Reg(object):
                 if to_json_list:
                     json_writer = get_json_writer(output)
                     write_list_to_json(to_json_list, json_writer)
+
+    def __get_shell_folders(self):
+        """Extracts information about shell folders saved location and opened date"""
+        self.logger.info("Extracting shell folders")
+        path = r'Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders\'
+        hive_list = self._get_list_from_registry_key(registry_obj.HKEY_USERS, path)
+        to_csv_list = [("COMPUTER_NAME", "TYPE", "LAST_WRITE_TIME", "HIVE", "KEY_PATH", "ATTR_NAME", "REG_TYPE",
+                        "ATTR_TYPE", "ATTR_DATA")]
+        for item in hive_list:
+            if item[KEY_VALUE_STR] == "VALUE":
+                if item[VALUE_NAME] != "MRUListEx":
+                    values_decoded = decode_recent_docs_mru(item[VALUE_DATA])
+                    for value_decoded in values_decoded:
+                        to_csv_list.append((self.computer_name,
+                                            "shell_folders",
+                                            item[VALUE_LAST_WRITE_TIME],
+                                            "HKEY_USERS",
+                                            item[VALUE_PATH],
+                                            item[VALUE_NAME],
+                                            item[KEY_VALUE_STR],
+                                            registry_obj.get_str_type(item[VALUE_TYPE]),
+                                            value_decoded))
+        return to_csv_list
+
+    def csv_shell_folders(self):
+        with open(self.output_dir + "\\" + self.computer_name + "_shell_folders" + self.rand_ext, "wb") as output:
+            csv_writer = get_csv_writer(output)
+            write_list_to_csv(self.__get_shell_folders(), csv_writer)
+
+    def json_shell_folders(self):
+        if self.destination == 'local':
+            with open(os.path.join(self.output_dir,'%s_shell_folders.json' % self.computer_name), 'wb') as output:
+                json_writer = get_json_writer(output)
+                write_list_to_json(self.__get_shell_folders(), json_writer)
